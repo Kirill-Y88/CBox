@@ -1,6 +1,6 @@
 package ServerCBox;
 
-import CoreCBox.ChatUnitMessage;
+import CoreCBox.FileMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import model.UserConstants;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class ChatUnitHandler extends SimpleChannelInboundHandler<ChatUnitMessage> {
-    List<ChatUnitMessage> fileList = new ArrayList<>();
+public class ChatUnitHandler extends SimpleChannelInboundHandler<FileMessage> {
+    List<FileMessage> fileList = new ArrayList<>();
     private static final ConcurrentLinkedDeque<ChannelHandlerContext> clients = new ConcurrentLinkedDeque<>();
 
     private String name;
@@ -27,7 +27,7 @@ public class ChatUnitHandler extends SimpleChannelInboundHandler<ChatUnitMessage
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ChatUnitMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, FileMessage msg) throws Exception {
 
         if (msg.getPathname().equals(UserConstants.DEFAULT_SENDER_NAME)) {
             msg.setPathname(name);
@@ -47,7 +47,7 @@ public class ChatUnitHandler extends SimpleChannelInboundHandler<ChatUnitMessage
 
     private void writeToFile (String path){
         try (FileOutputStream fos = new FileOutputStream(path)) {
-            for ( ChatUnitMessage bmsg: fileList) {
+            for ( FileMessage bmsg: fileList) {
                 fos.write(bmsg.getByteArr(), 0, bmsg.getIndexArray());
                 System.out.println("Write part " + bmsg.getPart());
             }

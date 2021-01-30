@@ -2,15 +2,15 @@ package model;
 
 import java.time.LocalDateTime;
 
-public class ChatUnitMessage implements Message {
+public class FileMessage implements Message {
 
     private String senderName;
     private final String messageContent;
     private final LocalDateTime sendAt;
 
-    public ChatUnitMessage(String senderName,
-                           String messageContent,
-                           LocalDateTime sendAt) {
+    public FileMessage(String senderName,
+                       String messageContent,
+                       LocalDateTime sendAt) {
         this.senderName = senderName;
         this.messageContent = messageContent;
         this.sendAt = sendAt;

@@ -12,7 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import model.ChatUnitMessage;
+import model.FileMessage;
 import model.UserConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class ChatController implements Initializable {
         LocalDateTime sendAt = LocalDateTime.now();
         text.clear();
         os.writeObject(
-                new ChatUnitMessage(
+                new FileMessage(
                         UserConstants.DEFAULT_SENDER_NAME,
                         messageContent,
                         sendAt)
@@ -51,7 +51,7 @@ public class ChatController implements Initializable {
             new Thread(() -> {
                 while (true) {
                     try {
-                        ChatUnitMessage message = (ChatUnitMessage) is.readObject();
+                        FileMessage message = (FileMessage) is.readObject();
                         listView.getItems().add(message.toString());
                     } catch (Exception e) {
                         LOG.error("e = ", e);

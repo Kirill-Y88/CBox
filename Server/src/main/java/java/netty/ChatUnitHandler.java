@@ -4,10 +4,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import model.ChatUnitMessage;
+import model.FileMessage;
 import model.UserConstants;
 
-public class ChatUnitHandler extends SimpleChannelInboundHandler<ChatUnitMessage> {
+public class ChatUnitHandler extends SimpleChannelInboundHandler<FileMessage> {
 
     private static final ConcurrentLinkedDeque<ChannelHandlerContext> clients = new ConcurrentLinkedDeque<>();
 
@@ -22,7 +22,7 @@ public class ChatUnitHandler extends SimpleChannelInboundHandler<ChatUnitMessage
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ChatUnitMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, FileMessage msg) throws Exception {
 
         if (msg.getSenderName().equals(UserConstants.DEFAULT_SENDER_NAME)) {
             msg.setSenderName(name);

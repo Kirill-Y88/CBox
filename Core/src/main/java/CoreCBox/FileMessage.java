@@ -3,7 +3,7 @@ package CoreCBox;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ChatUnitMessage implements Serializable {
+public class FileMessage implements Serializable {
 
     private String pathname;
     private final String messageContent;
@@ -13,7 +13,7 @@ public class ChatUnitMessage implements Serializable {
     int indexArray;
     boolean finish;
 
-    public ChatUnitMessage(String pathname, String messageContent, LocalDateTime sendAt, byte[] byteArr, int part, int indexArray, boolean finish) {
+    public FileMessage(String pathname, String messageContent, LocalDateTime sendAt, byte[] byteArr, int part, int indexArray, boolean finish) {
         this.pathname = pathname;
         this.messageContent = messageContent;
         this.sendAt = sendAt;

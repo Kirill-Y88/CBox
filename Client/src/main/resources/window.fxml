@@ -17,6 +17,7 @@
         <items>
           <Button fx:id="btn_connect" mnemonicParsing="false" onAction="#connect" prefHeight="27.0" prefWidth="79.0" text="Connect" />
             <Button fx:id="btn_disconnect" mnemonicParsing="false" onAction="#disconnect" prefHeight="25.0" prefWidth="77.0" text="Disconnect" />
+           <Button fx:id="btn_log_in" mnemonicParsing="false" onAction="#log_in" prefHeight="25.0" prefWidth="77.0" text="Log_in" />
         </items>
       </ToolBar>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="248.0" prefWidth="707.0" VBox.vgrow="ALWAYS">
