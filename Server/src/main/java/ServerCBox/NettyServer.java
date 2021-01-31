@@ -13,11 +13,33 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class NettyServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyServer.class);
+    private Path pathUserRoot = null;
+    private Path pathFull;
+    private int countPathRoot;
+
+
+    public Path getPathFull() {
+        return pathFull;
+    }
+
+    public int getCountPathRoot() {
+        return countPathRoot;
+    }
 
     public NettyServer() {
+        pathFull = Paths.get(".").toAbsolutePath().resolve("Clients");
+        countPathRoot = pathFull.getNameCount();
+        System.out.println(pathFull);
+        System.out.println(countPathRoot);
+       // new ServerController(this);
+
+
         EventLoopGroup auth = new NioEventLoopGroup(1);
         EventLoopGroup worker = new NioEventLoopGroup();
         try {
@@ -30,7 +52,8 @@ public class NettyServer {
                             channel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ChatUnitHandler());
+                                    new ChatUnitHandler(),
+                                    new CommandMessageHandler(new ServerController()));
                         }
                     });
             ChannelFuture future = bootstrap.bind(8189).sync();

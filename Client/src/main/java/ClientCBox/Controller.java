@@ -1,5 +1,6 @@
 package ClientCBox;
 
+import CoreCBox.CommandMessage;
 import CoreCBox.FileMessage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -64,6 +65,9 @@ public class Controller implements Initializable {
     private boolean tableClientFocus = false;
     private boolean tableServerFocus = false;
     private String newDirectory;
+    private Path pathUserRoot = null;
+    private Path pathUserFull = null;
+    private int countPathRoot;
 
 
 
@@ -181,13 +185,21 @@ public class Controller implements Initializable {
                 if (Files.isDirectory(path)) {
                     updateListServer(path);
                 }
+                int size = path.getNameCount();
+                System.out.println(size);
+                System.out.println(path);
+                pathUserFull =  path.subpath(countPathRoot + 1 , size);
+                System.out.println(pathUserRoot);
+                System.out.println(pathUserFull);
             }
         });
 
         updateListClient(Paths.get("./"));
-        updateListServer(Paths.get("Client/Clients"));
-
-
+       // updateListServer(Paths.get("Client/Clients"));
+        tableViewServer.setVisible(false);
+        countPathRoot = (Paths.get(".").toAbsolutePath()).getNameCount();
+        System.out.println(Paths.get("./").toAbsolutePath());
+        System.out.println(countPathRoot);
     }
 
     /*public void updateList(Path path) {
@@ -256,18 +268,29 @@ public class Controller implements Initializable {
 
     public void log_in(ActionEvent actionEvent){
         String loginUser = login.getText();
-
-        Path createNewDirectory = null;
-
-            createNewDirectory = Paths.get("Client/Clients", "/" + loginUser);
+        File directoryUser = new File("Client/Clients/" + loginUser);
+        pathUserRoot = Paths.get(directoryUser.getName());
+        if (directoryUser.isDirectory()){
+            tableViewServer.setVisible(true);
+            updateListServer(Paths.get(directoryUser.getPath()));
+            network.sendCommand(new CommandMessage(0, loginUser));
+        }else {
+            Path createNewDirectory = Paths.get(directoryUser.getPath());
             try {
                 Files.createDirectory(createNewDirectory);
+                tableViewServer.setVisible(true);
                 updateListServer(createNewDirectory);
+                network.sendCommand(new CommandMessage(0, loginUser));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
 
-
+    public void log_out(ActionEvent actionEvent){
+        tableViewServer.setVisible(false);
+        pathServer.clear();
+        pathUserRoot = null;
 
     }
 
@@ -280,7 +303,10 @@ public class Controller implements Initializable {
 
     public void upServer(ActionEvent actionEvent) {
         Path upperPath = Paths.get(pathServer.getText()).getParent();
-        if (upperPath != null) {
+        Path thisPathName = Paths.get(pathServer.getText()).getFileName();
+        if(thisPathName.equals(pathUserRoot)){
+            return;
+        } else if (upperPath != null ) {
             updateListServer(upperPath);
         }
     }
@@ -398,22 +424,22 @@ public class Controller implements Initializable {
         File newNameDir;
         File oldNameDir;
         if(tableClientFocus == true){
-           Path oldName = Paths.get(pathClient.getText(), tableViewClient.getSelectionModel().getSelectedItem().getFilename());
+           Path oldNameDirectory = Paths.get(pathClient.getText(), tableViewClient.getSelectionModel().getSelectedItem().getFilename());
             dialog.showAndWait();
-            Path newName  = oldName.getParent().resolve((dialog.getEditor()).getText());
+            Path newNameDirectory  = oldNameDirectory.getParent().resolve((dialog.getEditor()).getText());
             dialog.showAndWait();
-            oldNameDir = new File(oldName.toString());
-            newNameDir = new File(newName.toString());
+            oldNameDir = new File(oldNameDirectory.toString());
+            newNameDir = new File(newNameDirectory.toString());
             oldNameDir.renameTo(newNameDir);
             updateListClient(Paths.get(pathClient.getText()));
         }
         if(tableServerFocus == true){
-            Path oldName = Paths.get(pathServer.getText(), tableViewServer.getSelectionModel().getSelectedItem().getFilename());
+            Path oldNameDirectory = Paths.get(pathServer.getText(), tableViewServer.getSelectionModel().getSelectedItem().getFilename());
             dialog.showAndWait();
-            Path newName  = oldName.getParent().resolve((dialog.getEditor()).getText());
+            Path newNameDirectory  = oldNameDirectory.getParent().resolve((dialog.getEditor()).getText());
             dialog.showAndWait();
-            oldNameDir = new File(oldName.toString());
-            newNameDir = new File(newName.toString());
+            oldNameDir = new File(oldNameDirectory.toString());
+            newNameDir = new File(newNameDirectory.toString());
             oldNameDir.renameTo(newNameDir);
             updateListServer(Paths.get(pathServer.getText()));
         }

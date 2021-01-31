@@ -1,5 +1,6 @@
 package ClientCBox;
 
+import CoreCBox.CommandMessage;
 import CoreCBox.FileMessage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -110,10 +111,11 @@ SocketChannel sChannel;
 
         return true;
     }
-    public boolean sendCommand(){
-
+    public boolean sendCommand(CommandMessage commandMessage) {
+        sChannel.writeAndFlush(commandMessage);
         return true;
     }
+
 
     public void disconnect (){
         sChannel.close();
