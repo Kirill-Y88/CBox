@@ -65,9 +65,10 @@ public class Controller implements Initializable {
     private boolean tableClientFocus = false;
     private boolean tableServerFocus = false;
     private String newDirectory;
-    private Path pathUserRoot = null;
-    private Path pathUserFull = null;
+    private Path pathUserRoot;
+    private Path pathUserFull;
     private int countPathRoot;
+
 
 
 
@@ -270,6 +271,7 @@ public class Controller implements Initializable {
         String loginUser = login.getText();
         File directoryUser = new File("Client/Clients/" + loginUser);
         pathUserRoot = Paths.get(directoryUser.getName());
+        pathUserFull = pathUserRoot;
         if (directoryUser.isDirectory()){
             tableViewServer.setVisible(true);
             updateListServer(Paths.get(directoryUser.getPath()));
@@ -288,10 +290,11 @@ public class Controller implements Initializable {
     }
 
     public void log_out(ActionEvent actionEvent){
+        String loginUser = login.getText();
         tableViewServer.setVisible(false);
         pathServer.clear();
         pathUserRoot = null;
-
+        network.sendCommand(new CommandMessage(1, loginUser));
     }
 
     public void upClient(ActionEvent actionEvent) {
@@ -308,6 +311,12 @@ public class Controller implements Initializable {
             return;
         } else if (upperPath != null ) {
             updateListServer(upperPath);
+            int size = upperPath.getNameCount();
+            System.out.println(size);
+            System.out.println(pathUserFull);
+            pathUserFull =  upperPath.subpath(countPathRoot + 1 , size);
+            System.out.println(pathUserRoot);
+            System.out.println(pathUserFull);
         }
     }
 
@@ -393,8 +402,10 @@ public class Controller implements Initializable {
         if(tableClientFocus == true){
             pathDelete = Paths.get(pathClient.getText(), tableViewClient.getSelectionModel().getSelectedItem().getFilename());
         try{
+
             Files.delete(pathDelete);
             updateListClient(Paths.get(pathClient.getText()));
+
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Не удалось удалить указанный файл", ButtonType.OK);
@@ -404,8 +415,10 @@ public class Controller implements Initializable {
         if(tableServerFocus == true){
             pathDelete = Paths.get(pathServer.getText(), tableViewServer.getSelectionModel().getSelectedItem().getFilename());
             try{
+                network.sendCommand( new CommandMessage(3, pathUserFull.resolve(tableViewServer.getSelectionModel().getSelectedItem().getFilename()).toString()));
             Files.delete(pathDelete);
             updateListServer(Paths.get(pathServer.getText()));
+         //   network.sendCommand(new CommandMessage(3, (pathUserFull.resolve(tableViewServer.getSelectionModel().getSelectedItem().getFilename())).toString()));
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Не удалось удалить указанный файл", ButtonType.OK);
@@ -470,6 +483,13 @@ public class Controller implements Initializable {
                 try {
                     Files.createDirectory(createNewDirectory);
                     updateListServer(createNewDirectory.getParent());
+                    System.out.println(pathUserFull + " путь юзера");
+
+                    System.out.println("новая директория на отправку версия 2  " +  pathUserFull.resolve(newDirectory));
+                   network.sendCommand( new CommandMessage(4, (pathUserFull.resolve(newDirectory)).toString()));
+
+                 //   network.sendCommand(new CommandMessage(0, loginUser));
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Директория с таким именем уже существует", ButtonType.OK);

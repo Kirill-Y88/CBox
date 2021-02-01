@@ -25,11 +25,26 @@ public class CommandMessageHandler extends SimpleChannelInboundHandler<CommandMe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CommandMessage msg) throws Exception {
 
+        serverController.log(Integer.toString(msg.getCodeOperation()));
+        serverController.log(msg.getStringPath());
         if(msg.getCodeOperation() == 0) {
-            serverController.log_in(msg.getLogin());
-
+            serverController.log_in(msg.getStringPath());
+            System.out.println("пользователь " +msg.getStringPath()+ " залогинился");
+        }
+        if(msg.getCodeOperation() == 1) {
+            System.out.println("пользователь " +msg.getStringPath()+ " вышел из учетной записи");
         }
 
+        if(msg.getCodeOperation() == 3) {
+            serverController.delete_directory(msg.getStringPath());
+            System.out.println("директория " +msg.getStringPath()+ " удалена");
+        }
+
+        if(msg.getCodeOperation() == 4) {
+            System.out.println("начат процесс создания директории");
+            serverController.create_directory(msg.getStringPath());
+            System.out.println("директория " +msg.getStringPath()+ " создана");
+        }
 
 
 

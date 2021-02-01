@@ -1,55 +1,31 @@
 package CoreCBox;
 
-import java.io.File;
-import java.nio.file.Path;
-
 /*
 Коды операций:
 0 - вход/лог_ин
-
+1 - выход/лог_аут
+3 - удаление директории/delete
+4 - создание директории/create
 
 */
 
 
 public class CommandMessage implements Message {
     private int codeOperation;
-    private Path pathDir;
-    private Path createNewDirectory;
-    private Path pathDelete;
-    private Path oldNameDirectory;
-    private Path newNameDirectory;
-    private String login;
+    private String stringPath;
 
-    public CommandMessage(int codeOperation, String login) {
+    public CommandMessage(int codeOperation, String stringPath) {
         this.codeOperation = codeOperation;
-        this.login = login;
+        this.stringPath = stringPath;
     }
+
 
     public int getCodeOperation() {
         return codeOperation;
     }
 
-    public Path getPathDir() {
-        return pathDir;
-    }
 
-    public Path getCreateNewDirectory() {
-        return createNewDirectory;
-    }
-
-    public Path getPathDelete() {
-        return pathDelete;
-    }
-
-    public Path getOldNameDirectory() {
-        return oldNameDirectory;
-    }
-
-    public Path getNewNameDirectory() {
-        return newNameDirectory;
-    }
-
-    public String getLogin() {
-        return login;
+    public String getStringPath() {
+        return stringPath;
     }
 }
