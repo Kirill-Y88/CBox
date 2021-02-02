@@ -60,7 +60,17 @@ public class ServerController  {
             System.out.println("директория удалена инфа 100");
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("директория Не удалена инфа 100");
         }
+    }
+
+    public void rename (String oldNameDirectory, String newNameDirectory){
+        File oldNameDir = new File("Server/Clients/" +oldNameDirectory);
+        File newNameDir = new File("Server/Clients/" +newNameDirectory);
+        System.out.println("old " + oldNameDir);
+        System.out.println("new " + newNameDir);
+        oldNameDir.renameTo(newNameDir);
+        System.out.println("переименование на стороне сервера");
     }
 
 
@@ -68,6 +78,7 @@ public class ServerController  {
     public void log (String s){
         System.out.println(s);
     }
+
 
 
 

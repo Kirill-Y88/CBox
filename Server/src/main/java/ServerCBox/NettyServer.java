@@ -52,7 +52,7 @@ public class NettyServer {
                             channel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ChatUnitHandler(),
+                                    new FileMessageHandler(),
                                     new CommandMessageHandler(new ServerController()));
                         }
                     });

@@ -46,6 +46,16 @@ public class CommandMessageHandler extends SimpleChannelInboundHandler<CommandMe
             System.out.println("директория " +msg.getStringPath()+ " создана");
         }
 
+        if(msg.getCodeOperation() == 5){
+            System.out.println("начат процесс переименования файла");
+
+
+            serverController.rename(msg.getStringPath(), msg.getStringPath2());
+            System.out.println(" CMH  old " + msg.getStringPath());
+            System.out.println(" CMH  new " + msg.getStringPath2());
+            System.out.println("закончен процесс переименования файла");
+        }
+
 
 
 

@@ -68,8 +68,8 @@ public class Controller implements Initializable {
     private Path pathUserRoot;
     private Path pathUserFull;
     private int countPathRoot;
-
-
+    private String filePathToServer;
+    private String filePathFromClient;
 
 
 
@@ -325,8 +325,12 @@ public class Controller implements Initializable {
         Path dstPath = null;
 
         if(tableClientFocus == true){
+            filePathToServer = (pathUserFull.resolve(tableViewClient.getSelectionModel().getSelectedItem().getFilename()).toString());
+          //  filePathFromClient = Paths.get(pathClient.getText()).resolve((tableViewClient.getSelectionModel().getSelectedItem().getFilename()));
             srcPath = Paths.get(pathClient.getText(), tableViewClient.getSelectionModel().getSelectedItem().getFilename());
-            dstPath = Paths.get(pathServer.getText()).resolve(tableViewClient.getSelectionModel().getSelectedItem().getFilename());
+            dstPath = (Paths.get(pathServer.getText()).getParent()).resolve(filePathToServer);
+
+
 
 
         }
@@ -337,9 +341,25 @@ public class Controller implements Initializable {
         }
 
         try {
+
+            System.out.println("откуда " + srcPath);
+            System.out.println("куда " + dstPath);
+
             Files.copy(srcPath, dstPath);
             updateListServer(Paths.get(pathServer.getText()));
             updateListClient(Paths.get(pathClient.getText()));
+
+
+            if(tableClientFocus == true){
+                /*try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+                System.out.println(" отправка на сервер" + filePathToServer);
+                network.sendFile(filePathToServer);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Не удалось скопировать указанный файл, файл с таким названием уже существует", ButtonType.OK);
@@ -447,14 +467,24 @@ public class Controller implements Initializable {
             updateListClient(Paths.get(pathClient.getText()));
         }
         if(tableServerFocus == true){
-            Path oldNameDirectory = Paths.get(pathServer.getText(), tableViewServer.getSelectionModel().getSelectedItem().getFilename());
+            String fileName = tableViewServer.getSelectionModel().getSelectedItem().getFilename();
+
+            Path oldNameDirectory = Paths.get(pathServer.getText(), fileName);
             dialog.showAndWait();
-            Path newNameDirectory  = oldNameDirectory.getParent().resolve((dialog.getEditor()).getText());
+            String fileNameNew = (dialog.getEditor()).getText();
+            Path newNameDirectory  = oldNameDirectory.getParent().resolve(fileNameNew);
             dialog.showAndWait();
             oldNameDir = new File(oldNameDirectory.toString());
             newNameDir = new File(newNameDirectory.toString());
             oldNameDir.renameTo(newNameDir);
             updateListServer(Paths.get(pathServer.getText()));
+            network.sendCommand(new CommandMessage(5,
+                    (pathUserFull.resolve(fileName)).toString(),
+                    (pathUserFull.resolve(fileNameNew)).toString()));
+
+            System.out.println("Collector old " + (pathUserFull.resolve(fileName)).toString());
+            System.out.println("Collector new " + (pathUserFull.resolve(fileNameNew)).toString());
+
         }
 
 

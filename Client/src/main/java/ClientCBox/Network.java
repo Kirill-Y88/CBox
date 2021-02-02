@@ -12,6 +12,7 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -19,12 +20,11 @@ import java.time.LocalDateTime;
 public class Network {
 Thread thread;
 SocketChannel sChannel;
-    byte [] bArray =  new byte[3072];
-    int countPack;
-    int indexArray;
+
     String path;
-
-
+    byte [] bArray =  new byte[3072];
+    int countPack = 0;
+    int indexArray = 0;
 
     public Network (String host, String port){
         try {
@@ -54,62 +54,62 @@ SocketChannel sChannel;
             thread.start();
 
         } catch (Exception e) {
-            //LOG.error("e = ", e);
             System.out.println(e);
         }
-
-
-
     }
 
 
-    public boolean sendFile(){
+    public boolean sendFile(String filePath){
+      //  byte [] bArray =  new byte[3072];
+        int countPack = 0;
+        int indexArray = 0;
 
-
-        //String messageContent = text.getText();
         LocalDateTime sendAt = LocalDateTime.now();
-        //text.clear();
-        path = "Server/src/main/java/ServerCBox/photo.jpg";
-        try (FileInputStream fis = new FileInputStream("Client/src/main/java/ClientCBox/photo.jpg")) {
-            indexArray = 0;
-            while ( (indexArray = fis.read(bArray)) > 0){
-                //os.writeObject
+
+        File file = new File("Client/Clients/" + filePath);
+
+        long fileSize = file.length();
+        int quantity = (int)fileSize/3072 +1;
+
+        try (FileInputStream fis = new FileInputStream("Client/Clients/" + filePath)) {
+
+            while ( (indexArray = fis.read(bArray)) != -1){
                 sChannel.writeAndFlush
                         (
                                 new FileMessage(
-                                        path,
+                                        filePath,
                                         "fish",
                                         sendAt,
                                         bArray,
                                         countPack,
                                         indexArray,
-                                        false)
+                                        false,
+                                        quantity)
                         );
-                // os.flush();
                 countPack++;
             }
             indexArray = 0;
-            //os.writeObject
             sChannel.writeAndFlush(
                     new FileMessage(
-                            path,
+                            filePath,
                             "Fish",
                             sendAt,
                             new byte[]{},
                             countPack,
                             indexArray,
-                            true)
+                            true,
+                            quantity)
             );
-            // os.flush();
-
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            indexArray = 0;
+            countPack = 0;
+            return false;
         }
 
 
 
-
-        return true;
     }
     public boolean sendCommand(CommandMessage commandMessage) {
         sChannel.writeAndFlush(commandMessage);
