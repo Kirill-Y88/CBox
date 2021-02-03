@@ -14,7 +14,7 @@ public class FileMessage implements Serializable {
     boolean finish;
     int quantity;
 
-    public FileMessage(String pathname, String messageContent, LocalDateTime sendAt, byte[] byteArr, int part, int indexArray, boolean finish, int quantity) {
+    public FileMessage(String pathname, String messageContent, LocalDateTime sendAt, byte[] byteArr, int part, int indexArray, boolean finish) {
         this.pathname = pathname;
         this.messageContent = messageContent;
         this.sendAt = sendAt;
@@ -22,7 +22,7 @@ public class FileMessage implements Serializable {
         this.part = part;
         this.indexArray = indexArray;
         this.finish = finish;
-        this.quantity = quantity;
+       // this.quantity = quantity;
     }
 
     public byte[] getByteArr() {
@@ -57,9 +57,9 @@ public class FileMessage implements Serializable {
         return finish;
     }
 
-    public int getQuantity() {
+    /*public int getQuantity() {
         return quantity;
-    }
+    }*/
 
     @Override
     public String toString() {

@@ -38,6 +38,13 @@ public class NettyServer {
         System.out.println(pathFull);
         System.out.println(countPathRoot);
        // new ServerController(this);
+       // SqlHandler sqlHandler = new SqlHandler();
+
+        SqlHandler.connect();
+       /*String login = SqlHandler.getLogin("user1", "u1");
+       SqlHandler.setLogin("prepar", "2");
+        System.out.println(SqlHandler.getLogin("prepar", "2"));
+        System.out.println(login);*/
 
 
         EventLoopGroup auth = new NioEventLoopGroup(1);
@@ -61,6 +68,7 @@ public class NettyServer {
             System.out.println(future.channel().isActive());
             LOG.debug("server started on PORT = 8189!");
             future.channel().closeFuture().sync(); // block
+            SqlHandler.disconnect();
         } catch (InterruptedException e) {
             LOG.error("e=", e);
         } finally {

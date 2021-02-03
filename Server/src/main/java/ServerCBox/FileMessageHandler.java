@@ -5,21 +5,23 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import model.UserConstants;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class FileMessageHandler extends SimpleChannelInboundHandler<FileMessage> {
-    List<FileMessage> fileList = new ArrayList<>(1000);
+    List<FileMessage> fileList = new ArrayList<>();
     Stack<FileMessage> fileMessageQueue = new Stack<>();
     private static final ConcurrentLinkedDeque<ChannelHandlerContext> clients = new ConcurrentLinkedDeque<>();
-
+    FileMessage fileMessage = null;
    // FileMessage [] fileMessages
 
     private String name;
     private String pathFile;
     private static int cnt = 0;
+    private FileOutputStream fos;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -41,27 +43,86 @@ public class FileMessageHandler extends SimpleChannelInboundHandler<FileMessage>
 
       //  recapacity(msg.getQuantity());
 
-       // fileList.add( msg.getPart(),msg);
-       // fileList.add( msg);
-        fileMessageQueue.add(msg);
-        if (msg.isFinish()) {
-            writeToFile("Server/Clients/" + msg.getPathname());}
 
+        if (msg.isFinish()) {
+            writeToFile("Server/Clients/" + msg.getPathname());
+            //closeFileStream();
+        }
+
+
+        fileList.add( msg.getPart(),msg);
+
+
+
+
+
+
+       // fileList.add( msg);
+        //fileMessageQueue.add(msg);
+
+        // 2 еще вариантик
+       /* if(!(fileMessage.getPathname()).equals(msg.getPathname())) {
+            fileMessage = msg;
+            openFileStream("Server/Clients/" + fileMessage.getPathname());
+            fos.write(fileMessage.getByteArr(), 0, fileMessage.getIndexArray());
+        }else {
+            fos.write(fileMessage.getByteArr(), 0, fileMessage.getIndexArray());
+        }*/
+
+
+
+
+
+    }
+
+    private void openFileStream(String path){
+        try {
+            fos = new FileOutputStream(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    private void closeFileStream(){
+        try {
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void writeToFile (String path){
         try (FileOutputStream fos = new FileOutputStream(path)) {
-            for ( FileMessage bmsg: fileMessageQueue) {
+            FileMessage fm;
+
+            /*for ( FileMessage bmsg: fileList) {
                 fos.write(bmsg.getByteArr(), 0, bmsg.getIndexArray());
                 System.out.println("Write part " + bmsg.getPart());
-            }
-/*
+            }*/
 
-            for (int i = 0 ; i < fileList.size() ; i++) {
-                fos.write((fileList.get(i)).getByteArr(), 0,(fileList.get(i)).getIndexArray());
-                System.out.println("Write part " + (fileList.get(i)).getPart());
+
+
+           /* for ( FileMessage bmsg: fileList) {
+                fos.write(bmsg.getByteArr(), 0, bmsg.getIndexArray());
+                System.out.println("Write part " + bmsg.getPart());
+            }*/
+
+
+
+
+
+           /* for (int i = 0 ; i < fileList.size() ; i++) {
+                fm = fileList.get(i);
+                fos.write(fm.getByteArr(), 0,fm.getIndexArray());
+                System.out.println("Write part " + fm.getPart());
+            }*/
+            System.out.println( "размер file list " + fileList.size() );
+            while (fileList.size()>0){
+                fm = fileList.remove(0);
+                fos.write(fm.getByteArr(), 0,fm.getIndexArray());
+                System.out.println("Write part " + fm.getPart());
             }
-*/
+
+
 
 
         }catch (IOException e){

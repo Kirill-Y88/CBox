@@ -8,18 +8,24 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.codec.serialization.*;
+import javafx.scene.control.ListView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.time.LocalDateTime;
 
 public class Network {
 Thread thread;
 SocketChannel sChannel;
+
+//версия 2
+    private ObjectEncoderOutputStream os;
+    private ObjectDecoderInputStream is;
+    public ListView<String> listView;
+
 
     String path;
     byte [] bArray =  new byte[3072];
@@ -27,6 +33,8 @@ SocketChannel sChannel;
     int indexArray = 0;
 
     public Network (String host, String port){
+
+        /*//версия 1
         try {
             thread = new Thread(() -> {
                 NioEventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -55,16 +63,39 @@ SocketChannel sChannel;
 
         } catch (Exception e) {
             System.out.println(e);
+        }*/
+
+        //версия 2
+        try {
+            Socket socket = new Socket(host, Integer.parseInt(port) );
+            os = new ObjectEncoderOutputStream(socket.getOutputStream());
+            is = new ObjectDecoderInputStream(socket.getInputStream());
+
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        FileMessage message = (FileMessage) is.readObject();
+                        listView.getItems().add(message.toString());
+                    } catch (Exception e) {
+                        System.out.println(e);
+                        break;
+                    }
+                }
+            }).start();
+        } catch (Exception e) {
+            System.out.println(e);
         }
+
+
     }
 
 
     public boolean sendFile(String filePath){
       //  byte [] bArray =  new byte[3072];
+        LocalDateTime sendAt = LocalDateTime.now();
+        /*//вариант 1
         int countPack = 0;
         int indexArray = 0;
-
-        LocalDateTime sendAt = LocalDateTime.now();
 
         File file = new File("Client/Clients/" + filePath);
 
@@ -106,18 +137,64 @@ SocketChannel sChannel;
             indexArray = 0;
             countPack = 0;
             return false;
+        }*/
+
+
+        //вариант 2
+       // path = "cloud-server/src/main/java/photo.jpg";
+        try (FileInputStream fis = new FileInputStream("Client/Clients/" + filePath)) {
+            indexArray = 0;
+            countPack = 0;
+            while ( (indexArray = fis.read(bArray)) > 0){
+                os.writeObject(
+                        new FileMessage(
+                                filePath,
+                                "fish",
+                                sendAt,
+                                bArray,
+                                countPack,
+                                indexArray,
+                                false)
+                );
+                os.flush();
+                countPack++;
+            }
+            indexArray = 0;
+            countPack++;
+            os.writeObject(
+                    new FileMessage(
+                            filePath,
+                            "fish",
+                            sendAt,
+                            new byte[]{},
+                            countPack,
+                            indexArray,
+                            true)
+            );
+            os.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
 
 
 
+    return true;
     }
     public boolean sendCommand(CommandMessage commandMessage) {
-        sChannel.writeAndFlush(commandMessage);
+        try {
+            os.writeObject(commandMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       // sChannel.writeAndFlush(commandMessage);
         return true;
     }
 
 
     public void disconnect (){
+
         sChannel.close();
         thread.interrupt();
     }
