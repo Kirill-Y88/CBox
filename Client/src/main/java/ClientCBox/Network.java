@@ -9,6 +9,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 
 import java.io.File;
@@ -32,7 +34,7 @@ SocketChannel sChannel;
     int countPack = 0;
     int indexArray = 0;
 
-    public Network (String host, String port){
+    public Network (String host, String port, Controller controller){
 
         /*//версия 1
         try {
@@ -74,7 +76,16 @@ SocketChannel sChannel;
             new Thread(() -> {
                 while (true) {
                     try {
-                        FileMessage message = (FileMessage) is.readObject();
+                        CommandMessage message = (CommandMessage) is.readObject();
+                        if(message.getCodeOperation() == 0 && message.isAutorization() == true){
+                            controller.log_in_auth(message.getStringPath());
+                        } else if(message.isAutorization() == false){
+                            System.out.println("Неверный логин пароль");
+                            Alert alert = new Alert(Alert.AlertType.ERROR, "Не верный логин / пароль", ButtonType.OK);
+                            alert.showAndWait();
+                        }
+
+
                         listView.getItems().add(message.toString());
                     } catch (Exception e) {
                         System.out.println(e);

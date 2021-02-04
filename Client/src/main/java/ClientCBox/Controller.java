@@ -258,7 +258,7 @@ public class Controller implements Initializable {
 
 
     public void connect(ActionEvent actionEvent) {
-    network = new Network(host.getText(), port.getText());
+    network = new Network(host.getText(), port.getText(), this);
 
     }
 
@@ -269,25 +269,62 @@ public class Controller implements Initializable {
 
     public void log_in(ActionEvent actionEvent){
         String loginUser = login.getText();
+        String passwordUser = password.getText();
+        network.sendCommand(new CommandMessage(0, loginUser, passwordUser));
+
+    }
+
+    public void log_in_auth(String loginUser){
+
         File directoryUser = new File("Client/Clients/" + loginUser);
         pathUserRoot = Paths.get(directoryUser.getName());
         pathUserFull = pathUserRoot;
         if (directoryUser.isDirectory()){
             tableViewServer.setVisible(true);
             updateListServer(Paths.get(directoryUser.getPath()));
-            network.sendCommand(new CommandMessage(0, loginUser));
+
         }else {
             Path createNewDirectory = Paths.get(directoryUser.getPath());
             try {
                 Files.createDirectory(createNewDirectory);
                 tableViewServer.setVisible(true);
                 updateListServer(createNewDirectory);
-                network.sendCommand(new CommandMessage(0, loginUser));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
+
+
+
+    /*public void log_in(ActionEvent actionEvent){
+        String loginUser = login.getText();
+        String passwordUser = password.getText();
+        File directoryUser = new File("Client/Clients/" + loginUser);
+        pathUserRoot = Paths.get(directoryUser.getName());
+        pathUserFull = pathUserRoot;
+        if (directoryUser.isDirectory()){
+            tableViewServer.setVisible(true);
+            updateListServer(Paths.get(directoryUser.getPath()));
+            network.sendCommand(new CommandMessage(0, loginUser, passwordUser));
+        }else {
+            Path createNewDirectory = Paths.get(directoryUser.getPath());
+            try {
+                Files.createDirectory(createNewDirectory);
+                tableViewServer.setVisible(true);
+                updateListServer(createNewDirectory);
+                network.sendCommand(new CommandMessage(0, loginUser, passwordUser));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }*/
+
+
+
+
 
     public void log_out(ActionEvent actionEvent){
         String loginUser = login.getText();

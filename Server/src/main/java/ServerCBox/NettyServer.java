@@ -22,6 +22,7 @@ public class NettyServer {
     private Path pathUserRoot = null;
     private Path pathFull;
     private int countPathRoot;
+    SocketChannel sChannel;
 
 
     public Path getPathFull() {
@@ -56,11 +57,12 @@ public class NettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel channel) throws Exception {
+                            sChannel = channel;
                             channel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
                                     new FileMessageHandler(),
-                                    new CommandMessageHandler(new ServerController()));
+                                    new CommandMessageHandler(new ServerController(sChannel)));
                         }
                     });
             ChannelFuture future = bootstrap.bind(8189).sync();

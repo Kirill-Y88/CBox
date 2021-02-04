@@ -1,6 +1,7 @@
 package ServerCBox;
 
 import CoreCBox.CommandMessage;
+import io.netty.channel.socket.SocketChannel;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -11,25 +12,35 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ServerController  {
-    private NettyServer nettyServer;
+   // private NettyServer nettyServer;
+   SocketChannel sChannel;
 
+    public ServerController(SocketChannel sChannel) {
+        this.sChannel= sChannel;
+    }
 
-    /*public ServerController(NettyServer nettyServer) {
-        this.nettyServer = nettyServer;
-    }*/
+    public void log_in(String login, String password){
 
-    public void log_in(String login){
-        File directoryUser = new File("Server/Clients/" + login);
-        if (directoryUser.isDirectory()){
-            System.out.println("Директория существует");
-        }else {
-            Path createNewDirectory = Paths.get(directoryUser.getPath());
-            try {
-                Files.createDirectory(createNewDirectory);
-                System.out.println("Создана новая директория");
-            } catch (IOException e) {
-                e.printStackTrace();
+        if((SqlHandler.getLogin(login,password)).equals(login)) {
+
+            sChannel.writeAndFlush(new CommandMessage(0,login, true));
+            System.out.println("логин пароль  верно");
+            File directoryUser = new File("Server/Clients/" + login);
+            if (directoryUser.isDirectory()) {
+                System.out.println("Директория существует");
+            } else {
+                Path createNewDirectory = Paths.get(directoryUser.getPath());
+                try {
+                    Files.createDirectory(createNewDirectory);
+                    System.out.println("Создана новая директория");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }else if((SqlHandler.getLogin(login,password)).equals(null)){
+
+            sChannel.writeAndFlush(new CommandMessage(0,login,false));
+            System.out.println("логин пароль НЕ верно");
         }
 
     }

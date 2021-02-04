@@ -28,8 +28,9 @@ public class CommandMessageHandler extends SimpleChannelInboundHandler<CommandMe
         serverController.log(Integer.toString(msg.getCodeOperation()));
         serverController.log(msg.getStringPath());
         if(msg.getCodeOperation() == 0) {
-            serverController.log_in(msg.getStringPath());
+            serverController.log_in(msg.getStringPath(), msg.getStringPath2());
             System.out.println("пользователь " +msg.getStringPath()+ " залогинился");
+
         }
         if(msg.getCodeOperation() == 1) {
             System.out.println("пользователь " +msg.getStringPath()+ " вышел из учетной записи");
