@@ -2,8 +2,6 @@ package ServerCBox;
 
 import CoreCBox.CommandMessage;
 import io.netty.channel.socket.SocketChannel;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ServerController  {
-   // private NettyServer nettyServer;
+
    SocketChannel sChannel;
 
     public ServerController(SocketChannel sChannel) {
@@ -44,7 +42,6 @@ public class ServerController  {
         }
 
     }
-
 
     public void create_directory(String stringNewDirectory) {
         System.out.println(" create " + stringNewDirectory);
@@ -83,7 +80,6 @@ public class ServerController  {
         oldNameDir.renameTo(newNameDir);
         System.out.println("переименование на стороне сервера");
     }
-
 
 
     public void log (String s){

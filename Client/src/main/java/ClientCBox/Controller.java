@@ -1,13 +1,7 @@
 package ClientCBox;
 
 import CoreCBox.CommandMessage;
-import CoreCBox.FileMessage;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
+
 import io.netty.handler.codec.serialization.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -51,12 +45,6 @@ public class Controller implements Initializable {
     @FXML
     TableView<FileInfo> tableViewServer;
 
-    /*byte [] bArray =  new byte[3072];
-    int countPack;
-    int indexArray;
-    String path;
-    SocketChannel sChannel;
-    Thread t;*/
 
     public TextField text;
     private ObjectEncoderOutputStream os;
@@ -196,35 +184,12 @@ public class Controller implements Initializable {
         });
 
         updateListClient(Paths.get("./"));
-       // updateListServer(Paths.get("Client/Clients"));
         tableViewServer.setVisible(false);
         countPathRoot = (Paths.get(".").toAbsolutePath()).getNameCount();
         System.out.println(Paths.get("./").toAbsolutePath());
         System.out.println(countPathRoot);
     }
 
-    /*public void updateList(Path path) {
-        try {
-            pathServer.setText(path.normalize().toAbsolutePath().toString());
-            tableViewServer.getItems().clear();
-            tableViewServer.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
-            //запускаем стрим по указанному пути/преобразуем все полученное в объекты файл инфо/ упаковвываем полученные данные в коллекцию Лист
-            tableViewServer.sort();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "По какой-то причине не удалось обновить список файлов", ButtonType.OK);
-            alert.showAndWait();
-        }
-        try {
-            pathClient.setText(path.normalize().toAbsolutePath().toString());
-            tableViewClient.getItems().clear();
-            tableViewClient.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
-            //запускаем стрим по указанному пути/преобразуем все полученное в объекты файл инфо/ упаковвываем полученные данные в коллекцию Лист
-            tableViewClient.sort();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "По какой-то причине не удалось обновить список файлов", ButtonType.OK);
-            alert.showAndWait();
-        }
-    }*/
 
     public void updateListClient(Path path) {
         try {
@@ -251,9 +216,6 @@ public class Controller implements Initializable {
             alert.showAndWait();
         }
     }
-
-
-
 
 
 
@@ -298,34 +260,6 @@ public class Controller implements Initializable {
     }
 
 
-
-    /*public void log_in(ActionEvent actionEvent){
-        String loginUser = login.getText();
-        String passwordUser = password.getText();
-        File directoryUser = new File("Client/Clients/" + loginUser);
-        pathUserRoot = Paths.get(directoryUser.getName());
-        pathUserFull = pathUserRoot;
-        if (directoryUser.isDirectory()){
-            tableViewServer.setVisible(true);
-            updateListServer(Paths.get(directoryUser.getPath()));
-            network.sendCommand(new CommandMessage(0, loginUser, passwordUser));
-        }else {
-            Path createNewDirectory = Paths.get(directoryUser.getPath());
-            try {
-                Files.createDirectory(createNewDirectory);
-                tableViewServer.setVisible(true);
-                updateListServer(createNewDirectory);
-                network.sendCommand(new CommandMessage(0, loginUser, passwordUser));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
-
-
-
-
     public void log_out(ActionEvent actionEvent){
         String loginUser = login.getText();
         tableViewServer.setVisible(false);
@@ -367,14 +301,10 @@ public class Controller implements Initializable {
             srcPath = Paths.get(pathClient.getText(), tableViewClient.getSelectionModel().getSelectedItem().getFilename());
             dstPath = (Paths.get(pathServer.getText()).getParent()).resolve(filePathToServer);
 
-
-
-
         }
         if(tableServerFocus == true){
             srcPath = Paths.get(pathServer.getText(), tableViewServer.getSelectionModel().getSelectedItem().getFilename());
             dstPath = Paths.get(pathClient.getText()).resolve(tableViewServer.getSelectionModel().getSelectedItem().getFilename());
-
         }
 
         try {
@@ -386,13 +316,7 @@ public class Controller implements Initializable {
             updateListServer(Paths.get(pathServer.getText()));
             updateListClient(Paths.get(pathClient.getText()));
 
-
             if(tableClientFocus == true){
-                /*try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                 System.out.println(" отправка на сервер" + filePathToServer);
                 network.sendFile(filePathToServer);
             }
@@ -403,54 +327,6 @@ public class Controller implements Initializable {
             alert.showAndWait();
         }
 
-
-
-
-
-
-
-
-
-/*
-        //String messageContent = text.getText();
-        LocalDateTime sendAt = LocalDateTime.now();
-        //text.clear();
-        path = "Server/src/main/java/ServerCBox/photo.jpg";
-        try (FileInputStream fis = new FileInputStream("Client/src/main/java/ClientCBox/photo.jpg")) {
-            indexArray = 0;
-            while ( (indexArray = fis.read(bArray)) > 0){
-                //os.writeObject
-                sChannel.writeAndFlush
-                        (
-                        new FileMessage(
-                                path,
-                                "fish",
-                                sendAt,
-                                bArray,
-                                countPack,
-                                indexArray,
-                                false)
-                );
-               // os.flush();
-                countPack++;
-            }
-            indexArray = 0;
-            //os.writeObject
-            sChannel.writeAndFlush(
-                    new FileMessage(
-                            path,
-                            "Fish",
-                            sendAt,
-                            new byte[]{},
-                            countPack,
-                            indexArray,
-                            true)
-            );
-           // os.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
     }
 
@@ -482,8 +358,6 @@ public class Controller implements Initializable {
             alert.showAndWait();
         }
         }
-
-
     }
 
     public void rename(ActionEvent actionEvent) {
@@ -523,10 +397,6 @@ public class Controller implements Initializable {
             System.out.println("Collector new " + (pathUserFull.resolve(fileNameNew)).toString());
 
         }
-
-
-
-
     }
 
     public void create_directory(ActionEvent actionEvent) {
@@ -535,7 +405,6 @@ public class Controller implements Initializable {
         dialog.setHeight(200);
         dialog.setTitle("Наименование новой директории");
         if(tableClientFocus == true||tableServerFocus == true) {
-
             dialog.showAndWait();
             //dialog.resultConverterProperty();
             // if(((dialog.resultConverterProperty()).getValue()).toString().equals(OK.getText())) {  //не понял как стащить события нажатия какой либо кнопки с окна
@@ -554,8 +423,6 @@ public class Controller implements Initializable {
 
                     System.out.println("новая директория на отправку версия 2  " +  pathUserFull.resolve(newDirectory));
                    network.sendCommand( new CommandMessage(4, (pathUserFull.resolve(newDirectory)).toString()));
-
-                 //   network.sendCommand(new CommandMessage(0, loginUser));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -581,10 +448,7 @@ public class Controller implements Initializable {
         }
     }
 
-
-
     public void exitAction(){
-
         Platform.exit();
     }
 }
