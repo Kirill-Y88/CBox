@@ -38,6 +38,7 @@ public class NettyServer {
         countPathRoot = pathFull.getNameCount();
         System.out.println(pathFull);
         System.out.println(countPathRoot);
+
        // new ServerController(this);
        // SqlHandler sqlHandler = new SqlHandler();
 
