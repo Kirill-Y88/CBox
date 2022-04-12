@@ -42,6 +42,7 @@ public class NettyServer {
        // new ServerController(this);
        // SqlHandler sqlHandler = new SqlHandler();
 
+
         SqlHandler.connect();
        /*String login = SqlHandler.getLogin("user1", "u1");
        SqlHandler.setLogin("prepar", "2");
