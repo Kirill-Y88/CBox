@@ -63,9 +63,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        TableColumn<FileInfo, String> fileTypeColumn = new TableColumn<>(); // создание столбца
+        TableColumn<FileInfo, String> fileTypeColumn = new TableColumn<>();
         fileTypeColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType().getName()));
-        //перевод из типа файл инфо в стринг
+
         fileTypeColumn.setPrefWidth(24);
 
         TableColumn<FileInfo, String> filenameColumn = new TableColumn<>("Имя");
@@ -95,7 +95,7 @@ public class Controller implements Initializable {
         fileSizeColumn.setPrefWidth(120);
 
 
-        TableColumn<FileInfo, String> fileTypeColumn2 = new TableColumn<>(); // создание столбца
+        TableColumn<FileInfo, String> fileTypeColumn2 = new TableColumn<>();
         fileTypeColumn2.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType().getName()));
         //перевод из типа файл инфо в стринг
         fileTypeColumn2.setPrefWidth(24);
@@ -126,7 +126,7 @@ public class Controller implements Initializable {
         });
         fileSizeColumn2.setPrefWidth(120);
 
-        TableColumn<FileInfo, String> fileSynhColumn2 = new TableColumn<>("Синхронизация"); // создание столбца
+        TableColumn<FileInfo, String> fileSynhColumn2 = new TableColumn<>("Синхронизация");
         fileSynhColumn2.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().isFileSynhronize()));
         fileSynhColumn2.setPrefWidth(120);
 
@@ -196,7 +196,6 @@ public class Controller implements Initializable {
             pathClient.setText(path.normalize().toAbsolutePath().toString());
             tableViewClient.getItems().clear();
             tableViewClient.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
-            //запускаем стрим по указанному пути/преобразуем все полученное в объекты файл инфо/ упаковвываем полученные данные в коллекцию Лист
             tableViewClient.sort();
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "По какой-то причине не удалось обновить список файлов", OK);
@@ -209,7 +208,6 @@ public class Controller implements Initializable {
             pathServer.setText(path.normalize().toAbsolutePath().toString());
             tableViewServer.getItems().clear();
             tableViewServer.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
-            //запускаем стрим по указанному пути/преобразуем все полученное в объекты файл инфо/ упаковвываем полученные данные в коллекцию Лист
             tableViewServer.sort();
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "По какой-то причине не удалось обновить список файлов", OK);
